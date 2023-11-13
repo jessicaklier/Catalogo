@@ -7,12 +7,15 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.dscatalog.dto.CategoriaDTO;
 import com.devsuperior.dscatalog.entities.Categoria;
 import com.devsuperior.dscatalog.repositories.CategoriaRepository;
+import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
 @Service                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
@@ -53,6 +56,20 @@ public class CategoriaService {
 	}
 		catch(EntityNotFoundException e) {
 		throw new ResourceNotFoundException("Identificação não encontrada" + id);
+		}
+	}
+
+	public void delete(Long id) {
+		try {
+		repository.deleteById(id);
+		
+	}
+		catch(EmptyResultDataAccessException e)
+		{
+			throw new ResourceNotFoundException("Identificação não encontrada" + id);
+		}
+		catch(DataIntegrityViolationException e) {
+			throw new DatabaseException("Violação de Integridade");
 		}
 	}
 }
